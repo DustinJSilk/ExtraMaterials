@@ -48,7 +48,8 @@ var ClearCoatMaterial = function ClearCoatMaterial(parameters) {
 
   // console.log( shaderParams.uniforms );
   // console.log( shaderParams.vertexShader );
-  console.log(shaderParams.fragmentShader);
+  // console.log( shaderParams.fragmentShader );
+
   shaderParams.uniforms.refractiveRatio = {
     type: 'f',
     value: parameters && parameters.refractiveRatio || 0.6

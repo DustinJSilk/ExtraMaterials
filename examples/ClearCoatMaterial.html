@@ -23,6 +23,8 @@ a{color: #FFF;}
 <script src="js/three.min.js"></script>
 <script src="../build/ClearCoatMaterial.js"></script>
 <script>
+'use strict';
+
 var width  = window.innerWidth,
     height = window.innerHeight,
     clock = new THREE.Clock(),
@@ -61,7 +63,7 @@ textureCube.format = THREE.RGBFormat;
 var skyboxShader = THREE.ShaderLib[ "cube" ];
 skyboxShader.uniforms[ "tCube" ].value = textureCube;
 
-skyboxMaterial = new THREE.ShaderMaterial( {
+var skyboxMaterial = new THREE.ShaderMaterial( {
 
   fragmentShader: skyboxShader.fragmentShader,
   vertexShader: skyboxShader.vertexShader,
@@ -71,7 +73,7 @@ skyboxMaterial = new THREE.ShaderMaterial( {
 
 } );
 
-skybox = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100 ), skyboxMaterial );
+var skybox = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100 ), skyboxMaterial );
 scene.add( skybox );
 
 
