@@ -60,30 +60,23 @@ var textureCube = cubeTextureLoader.load( [
 ] );
 textureCube.format = THREE.RGBFormat;
 
-
-// var uvMap = textureLoader.load( './textures/uv.png' );
-// uvMap.wrapS = THREE.RepeatWrapping;
-// uvMap.wrapT = THREE.RepeatWrapping;
-// uvMap.repeat.set( 1, 1 );
-
 // var microfacet = textureLoader.load( './models/alfaromeo/microfacet_height.jpg' );
 var microfacet = textureLoader.load( './models/alfaromeo/microfacet_red.png' );
 microfacet.wrapS = THREE.RepeatWrapping;
 microfacet.wrapT = THREE.RepeatWrapping;
-microfacet.repeat.set( 10, 10 );
+microfacet.repeat.set( 16, 16 );
 
 var normal = textureLoader.load( './models/alfaromeo/microfacet_normal.png' );
 normal.wrapS = THREE.RepeatWrapping;
 normal.wrapT = THREE.RepeatWrapping;
-normal.repeat.set( 10, 10 );
+normal.repeat.set( 16, 16 );
 
 var clearCoatMaterial = new ClearCoatMaterial( {
   // color: 0xff0000,
-  // map: uvMap,
   map: microfacet,
   normalMap: normal,
   normalScale: new THREE.Vector2( 0.25, 0.25 ),
-  refractiveRatio: 0.6,
+  refractiveRatio: 0.8,
   envMap2: textureCube
 } );
 
@@ -108,8 +101,6 @@ loader.load( './models/alfaromeo/alfaromeo.json', function( geometry, materials 
   requestAnimationFrame( update );
 
   var elapsed = clock.getElapsedTime();
-
-  // if ( 16 < elapsed ) { return; }
 
   camera.position.set(
     Math.sin( elapsed * 0.5 ) * 4,
