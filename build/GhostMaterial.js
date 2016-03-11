@@ -2,7 +2,7 @@
  * @author yomotsu / http://yomotsu.net/
  */
 
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.ClearCoatMaterial = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.GhostMaterial = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -15,28 +15,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var additionalChank = {
 
-  unifroms: {
-    // viewVector:
-    envMap2: { type: "t", value: null }
-  },
+  unifroms: {},
 
-  vsHeader: [
-  // 'varying vec3 debug;',
-  'uniform float refractiveRatio;', 'varying vec3  vFrasnelReflect;', 'varying float vFrasnelAlpha;'].join('\n'),
+  vsHeader: ['varying float vAlpha;'].join('\n'),
 
-  // http://marupeke296.com/DXPS_PS_No7_FresnelReflection.html
-  vsAfter: ['vec3 worldNormal = inverseTransformDirection( transformedNormal, viewMatrix );', 'vec3 viewVec = worldPosition.xyz - cameraPosition;', 'float A = refractiveRatio;', 'float B = dot( - normalize( viewVec ), normalize( worldNormal ) );', 'float C = sqrt( 1.0 - A * A * ( 1.0 - B * B ) );', 'float Rs = ( A * B - C ) * ( A * B - C ) / ( ( A * B + C ) * ( A * B + C ) );', 'float Rp = ( A * C - B ) * ( A * C - B ) / ( ( A * C + B ) * ( A * C + B ) );', 'vFrasnelAlpha = ( Rs + Rp ) * 0.5;', 'vFrasnelReflect = reflect( normalize( viewVec ), worldNormal );'
+  vsAfter: ['vec3 worldNormal = inverseTransformDirection( transformedNormal, viewMatrix );', 'vec3 viewVec = worldPosition.xyz - cameraPosition;', 'float B = dot( - normalize( viewVec ), normalize( worldNormal ) );', 'vAlpha = pow( 1. - B, 3.0 ) + 0.1;'].join('\n'),
 
-  // ,'debug = vec3(1,1,1);'
-  ].join('\n'),
+  fsHeader: ['varying float vAlpha;'].join('\n'),
 
-  fsHeader: [
-  // 'varying vec3 debug;',
-  'uniform samplerCube envMap2;', 'varying vec3  vFrasnelReflect;', 'varying float vFrasnelAlpha;'].join('\n'),
-
-  fsAfter: ['vec4 frasnelEnvColor = textureCube( envMap2, vFrasnelReflect );',
-  // 'vec3 frasnelRefColor = frasnelEnvColor.xyz * vec3( vFrasnelAlpha );',
-  'vec3 frasnelRefColor = irradiance * frasnelEnvColor.xyz * vec3( vFrasnelAlpha );', 'vec3 outgoingLight2 = gl_FragColor.xyz * vec3( 1.0 - vFrasnelAlpha ) + frasnelRefColor;', '#ifdef USE_FOG', 'outgoingLight2 = mix( outgoingLight2, fogColor, fogFactor );', '#endif', 'gl_FragColor = vec4( outgoingLight2, diffuseColor.a );'].join('\n')
+  fsAfter: ['gl_FragColor.w = vAlpha;'].join('\n')
 
 }; /*!
     * @author yomotsu / http://yomotsu.net/
@@ -50,16 +37,12 @@ var ClearCoatMaterial = function ClearCoatMaterial(parameters) {
   // console.log( shaderParams.vertexShader );
   // console.log( shaderParams.fragmentShader );
 
-  shaderParams.uniforms.refractiveRatio = {
-    type: 'f',
-    value: parameters && parameters.refractiveRatio || 0.6
-  };
-  shaderParams.uniforms.envMap2.value = textureCube;
-
   THREE.ShaderMaterial.call(this, shaderParams);
 
   this.fog = true;
   this.lights = true;
+  this.transparent = true;
+  this.blending = THREE.AdditiveBlending;
 };
 
 ClearCoatMaterial.prototype = Object.create(THREE.ShaderMaterial.prototype);

@@ -53,7 +53,7 @@ var additionalChank = {
     '#endif',
 
     'gl_FragColor = vec4( outgoingLight2, diffuseColor.a );'
-  ].join( '\n' ),
+  ].join( '\n' )
 
 };
 
@@ -75,7 +75,6 @@ var ClearCoatMaterial = function ( parameters ) {
 
   this.fog    = true;
   this.lights = true;
-  this.side   = THREE.DoubleSide;
 
 }
 

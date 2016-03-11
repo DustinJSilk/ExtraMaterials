@@ -68,11 +68,52 @@ gulp.task( 'build:ClearCoat', function () {
 
 } );
 
+gulp.task( 'build:Ghost', function () {
+
+  return browserify( {
+    entries: './src/GhostMaterial.js',
+    standalone: 'GhostMaterial'
+  } )
+  .transform( babelify.configure( {
+    presets: [ 'es2015-loose' ],
+    plugins: [
+      'add-module-exports',
+      // for IE9
+      // see https://gist.github.com/zertosh/4f818163e4d68d58c0fa
+      'transform-proto-to-assign'
+    ]
+  } ) )
+  .bundle()
+  .on( 'error', function( err ) {
+
+    // print the error
+    console.log( 'Error : ' + err.message );
+
+    // Keep gulp from hanging on this task
+    this.emit( 'end' );
+
+    return notify().write( err.message );
+
+  } )
+  .pipe( source( 'GhostMaterial.js' ) )
+  .pipe( addSrc.prepend( 'src/_header.js' ) )
+  .pipe( streamify( concat( 'GhostMaterial.js' ) ) )
+  .pipe( gulp.dest( './build/' ) )
+  .pipe( uglify( { preserveComments: 'some' } ) )
+  .pipe( rename( { extname: '.min.js' } ) )
+  .pipe( gulp.dest( './build/' ) )
+
+} );
+
 
 gulp.task( 'watch', function () {
 
-  watch( [ './src/*.js' ], function () {
+  watch( [ './src/extendPhong.js', './src/ClearCoatMaterial.js' ], function () {
     runSequence( 'build:ClearCoat', browserSync.reload );
+  } );
+
+  watch( [ './src/extendPhong.js', './src/GhostMaterial.js' ], function () {
+    runSequence( 'build:Ghost', browserSync.reload );
   } );
 
 } );
@@ -80,6 +121,6 @@ gulp.task( 'watch', function () {
 
 gulp.task( 'default', function ( callback ) {
 
-  return runSequence( 'browser-sync', 'build:ClearCoat', 'watch', callback );
+  return runSequence( 'browser-sync', 'build:ClearCoat', 'build:Ghost', 'watch', callback );
 
 } );

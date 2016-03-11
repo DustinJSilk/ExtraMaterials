@@ -35,9 +35,6 @@ var width  = window.innerWidth,
     textureLoader = new THREE.TextureLoader(),
     cubeTextureLoader = new THREE.CubeTextureLoader();
 
-width  = window.innerWidth;
-height = window.innerHeight;
-clock  = new THREE.Clock();
 scene  = new THREE.Scene();
 camera = new THREE.PerspectiveCamera( 40, width / height, 1, 100 );
 renderer = new THREE.WebGLRenderer( { antialias: true } );
